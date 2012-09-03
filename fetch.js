@@ -1,7 +1,6 @@
 var domino = require('domino');
 var fs = require('fs');
 var request = require('request');
-var email   = require("emailjs");
 var Handlebars = require('handlebars');
 var Sendgrid = require('sendgrid').SendGrid;
 
