@@ -8,7 +8,7 @@
 		{{/photos}}
 	{{/if}}
 	{{#if map}}
-          <img class="map" src="http://maps.googleapis.com/maps/api/staticmap?size=400x300&markers={{map.lat}},{{map.long}}&sensor=false&key=AIzaSyDaK3hDKD7PNHtj2eAdaI5faiFx8o0op60&zoom=14" width=400 height=300>
+          <img class="map" src="http://maps.googleapis.com/maps/api/staticmap?size=400x300&markers={{map}}&sensor=false&key=AIzaSyDaK3hDKD7PNHtj2eAdaI5faiFx8o0op60&zoom=14" width=400 height=300>
         {{/if}}
 	</div>
 </div>

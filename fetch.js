@@ -171,10 +171,7 @@ function scrapePage(p) {
 
       var maps = doc.querySelector('#leaflet');
       if (maps) {
-        place.map = {
-          long : maps.getAttribute('data-longitude'),
-          lat : maps.getAttribute('data-latitude')
-        };
+        place.map = maps.getAttribute('data-latitude') + ',' + maps.getAttribute('data-longitude');
       }
 
       // add place to db

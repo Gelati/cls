@@ -3,6 +3,7 @@
   "version" : "0.0.1",
   "dependencies" : {
     "domino" : "*",
+    "express" : "*",
     "request" : "*",
     "handlebars" : "*",
     "emailjs" : "*",
