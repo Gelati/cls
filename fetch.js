@@ -3,8 +3,18 @@ var fs = require('fs');
 var request = require('request');
 var email   = require("emailjs");
 var Handlebars = require('handlebars');
-var redis = require("redis"),
+
+
+if (process.env.REDISTOGO_URL) {
+  var rtg   = require("url").parse(process.env.REDISTOGO_URL);
+  var redis = require('redis');
+  var client = redis.createClient(rtg.port, rtg.hostname);
+
+  client.auth(rtg.auth.split(":")[1]);
+} else {
+  var redis = require("redis"),
     client = redis.createClient();
+}
 
 var tpl = fs.readFileSync('./place.stache', 'utf8');
 var lay = fs.readFileSync('./email_layout.stache', 'utf8');
