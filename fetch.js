@@ -21,9 +21,11 @@ var lay = fs.readFileSync('./email_layout.stache', 'utf8');
 var template = Handlebars.compile(tpl);
 var layout = Handlebars.compile(lay);
 
-var query = 'http://sfbay.craigslist.org/search/apa/sfc?hasPic=1&maxAsk=3200&minAsk=2000&nh=10&nh=11&nh=12&nh=149&nh=18&nh=21&nh=4&srchType=T';
+var query = 'http://sfbay.craigslist.org/search/apa/sfc?&maxAsk=3250&minAsk=2000&nh=10&nh=11&nh=12&nh=149&nh=18&nh=21&nh=4&srchType=T';
 
 var sendEmail = 1;
+var imagestoignore = 'facebook|twitter|tweet|linkedin|yelp|feed|rss|created_at|apply_now|header|top|contact_us|footer|logo|common|acctPhoto|space\.|jwavro';
+
   
 var server  = email.server.connect({
    user:    'mattsain@gmail.com', 
@@ -161,7 +163,7 @@ function scrapePage(p) {
         });
       } else {
         doc.querySelectorAll('#userbody img').forEach(function(item) {
-          if (item.src.search('facebook|twitter|tweet|linkedin|yelp|feed|rss|created_at|apply_now|header|top|contact_us|footer|logo|common|acctPhoto') < 0) {
+          if (item.src.search(imagestoignore) < 0) {
             place.photos.push(item.src);
           } else {
             console.log(item.src, 'rejected');
