@@ -45,17 +45,30 @@ function getPlaces(cb) {
   });
 }
 
+// returns an array
+function sortit(data) {
+  var out = [];
+  for(var i in data) if (data.hasOwnProperty(i)) {
+    out.push(data[i]);
+  }
+  out.sort(function(a, b) {
+    if (a.added && !b.added) return true;
+    if (b.added && !a.added) return false;
+    return (b.added > a.added);
+  });
+  return out;
+}
 
 var app = exp();
 
 app.get('/', function(req, res){
   getPlaces(function (data) {
-    var out = [], page = '';
-    for(var i in data) if (data.hasOwnProperty(i)) {
-      out.push(template(data[i]));
-    };
+    var out = [], page = '', places = sortit(data);
+    places.forEach(function(place) {
+      out.push(template(place));
+    });
     page = '<h1>' + out.length + ' places found</h1>';
-    page += out.join();
+    page += out.join('');
     res.send(page);
   });
 });

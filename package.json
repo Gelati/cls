@@ -8,9 +8,9 @@
   "dependencies" : {
     "domino" : "*",
     "express" : "*",
-    "request" : "*",
     "handlebars" : "*",
-    "emailjs" : "*",
-    "redis" : "*"
+    "redis" : "*",
+    "request" : "*",
+    "sendgrid" : "*"
   }
 }

@@ -3,6 +3,7 @@ var fs = require('fs');
 var request = require('request');
 var email   = require("emailjs");
 var Handlebars = require('handlebars');
+var Sendgrid = require('sendgrid').SendGrid;
 
 if (process.env.REDISTOGO_URL) {
   var rtg   = require("url").parse(process.env.REDISTOGO_URL);
@@ -23,22 +24,13 @@ var layout = Handlebars.compile(lay);
 
 var query = 'http://sfbay.craigslist.org/search/apa/sfc?&maxAsk=3250&minAsk=2000&nh=10&nh=11&nh=12&nh=149&nh=18&nh=21&nh=4&srchType=T';
 
-var sendEmail = 1;
 var imagestoignore = 'facebook|twitter|tweet|linkedin|yelp|feed|rss|created_at|apply_now|header|top|contact_us|footer|logo|common|acctPhoto|space\.|jwavro';
 
-  
-var server  = email.server.connect({
-   user:    'mattsain@gmail.com', 
-   password:"mangLezo84", 
-   host:    "smtp.gmail.com", 
-   ssl:     true
-});
-
-var message = {
-   text:    "testing", 
-   from:    "craigslist update <mattsain@gmail.com>", 
-   to:      "munchkin <sunita.bose@gmail.com>, me <mattsain@gmail.com>"
-};
+//email shiz
+var sendgrid;
+if (process.env.SENDGRID_USERNAME) {
+  sendgrid = new SendGrid(process.env.SENDGRID_USERNAME, process.env.SENDGRID_PASSWORD);
+}
 
 var places = {};
 var msgs = [];
@@ -115,6 +107,7 @@ function stripText(txt) {
 function placeLoaded() {
   loadedCount += 1;
   if (loadedCount >= total) {
+    console.log('finished scraping. found ' + msgs.length + ' new places');
     client.end();
     if (msgs.length) sendmail();
   }
@@ -126,13 +119,16 @@ function sws(txt) {
 
 function sendmail() {
   var body = { body : msgs.join('').replace(/--+/g, ' ') };
-  message.subject = 'Craigslist update ' + (new Date()).toLocaleTimeString();
-  message.attachment = [{
-    data : sws(layout(body)),
-    alternative: true
-  }];
-  if (sendEmail) {
-    server.send(message, function(err, message) { 
+  
+  var message = {
+    from:    "craigslist update <mattsain@gmail.com>", 
+    to:      "munchkin <sunita.bose@gmail.com>, me <mattsain@gmail.com>",
+    subject: "Craigslist apartments for rent",
+    html : sws(layout(body))
+  };
+
+  if (sendgrid) {
+    sendgrid.send(message, function(err, message) { 
       if (err) console.log(err); 
     });
   } else {
@@ -150,6 +146,7 @@ function scrapePage(p) {
       var place = {
         title : title,
         href : p,
+        added : new Date(),
         photos : [],
         text: stripText(doc.getElementById('userbody').textContent),
       };
