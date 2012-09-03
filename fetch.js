@@ -28,7 +28,7 @@ var imagestoignore = 'facebook|twitter|tweet|linkedin|yelp|feed|rss|created_at|a
 //email shiz
 var sendgrid;
 if (process.env.SENDGRID_USERNAME) {
-  sendgrid = new SendGrid(process.env.SENDGRID_USERNAME, process.env.SENDGRID_PASSWORD);
+  sendgrid = new Sendgrid(process.env.SENDGRID_USERNAME, process.env.SENDGRID_PASSWORD);
 }
 
 var places = {};
