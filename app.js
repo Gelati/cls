@@ -38,7 +38,6 @@ function getPlaces(cb) {
       if (places[uid]) addLoaded();
       client.hgetall(uid, function (err, obj) {
         obj.photos = (obj.photos) ? obj.photos.split(',') : [];
-        console.log(obj.map);
         places[uid] = obj;
         addLoaded();
       });
@@ -51,11 +50,13 @@ var app = exp();
 
 app.get('/', function(req, res){
   getPlaces(function (data) {
-    var out = "";
+    var out = [], page = '';
     for(var i in data) if (data.hasOwnProperty(i)) {
-      out += template(data[i]);
+      out.push(template(data[i]));
     };
-    res.send(out);
+    page = '<h1>' + out.length + ' places found</h1>';
+    page += out.join();
+    res.send(page);
   });
 });
 
