@@ -1,0 +1,11 @@
+{
+  "name" : "cl",
+  "version" : "0.0.1",
+  "dependencies" : {
+    "domino" : "*",
+    "request" : "*",
+    "handlebars" : "*",
+    "emailjs" : "*",
+    "redis" : "*"
+  }
+}
