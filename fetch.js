@@ -4,7 +4,6 @@ var request = require('request');
 var email   = require("emailjs");
 var Handlebars = require('handlebars');
 
-
 if (process.env.REDISTOGO_URL) {
   var rtg   = require("url").parse(process.env.REDISTOGO_URL);
   var redis = require('redis');
@@ -113,8 +112,9 @@ function stripText(txt) {
 
 function placeLoaded() {
   loadedCount += 1;
-  if (loadedCount === total) {
-    sendmail();
+  if (loadedCount >= total) {
+    client.end();
+    if (msgs.length) sendmail();
   }
 }
 
@@ -192,16 +192,20 @@ function scrapePage(p) {
 
 
 //initialisation
-var loadedCount = 0;
+var loadedCount = -1;
 var total = 0;
 
 getPlaces(function () {
   scrape(query, function($, win, doc) {
-    doc.querySelectorAll('p.row a').forEach(function(item, i) {
+    var rows = doc.querySelectorAll('p.row a');
+    total = rows.length;
+    placeLoaded();
+    rows.forEach(function(item, i) {
       var href = item.href;
       if (isUnique(href)) {
-        total += 1;
         scrapePage(href);
+      } else {
+        placeLoaded();
       }
     });
   })
