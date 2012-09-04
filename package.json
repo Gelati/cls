@@ -9,6 +9,7 @@
     "domino" : "*",
     "express" : "*",
     "handlebars" : "*",
+    "hbs" : "*",
     "redis" : "*",
     "request" : "*",
     "sendgrid" : "*"

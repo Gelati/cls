@@ -15,8 +15,8 @@ if (process.env.REDISTOGO_URL) {
     client = redis.createClient();
 }
 
-var tpl = fs.readFileSync('./place.stache', 'utf8');
-var lay = fs.readFileSync('./email_layout.stache', 'utf8');
+var tpl = fs.readFileSync(__dirname + '/views/place.stache', 'utf8');
+var lay = fs.readFileSync(__dirname + '/views/email_layout.stache', 'utf8');
 
 var template = Handlebars.compile(tpl);
 var layout = Handlebars.compile(lay);
@@ -28,6 +28,9 @@ var imagestoignore = 'facebook|twitter|tweet|linkedin|yelp|feed|rss|created_at|a
 //email shiz
 var sendgrid;
 if (process.env.SENDGRID_USERNAME) {
+  console.log('sendgrid details');
+  console.log(process.env.SENDGRID_USERNAME);
+  console.log(process.env.SENDGRID_PASSWORD)
   sendgrid = new Sendgrid(process.env.SENDGRID_USERNAME, process.env.SENDGRID_PASSWORD);
 }
 
@@ -107,8 +110,8 @@ function placeLoaded() {
   loadedCount += 1;
   if (loadedCount >= total) {
     console.log('finished scraping. found ' + msgs.length + ' new places');
-    client.end();
     if (msgs.length) sendmail();
+    client.end();
   }
 }
 
@@ -126,13 +129,15 @@ function sendmail() {
     html : sws(layout(body))
   };
 
+  console.log(message);
+
   if (sendgrid) {
     sendgrid.send(message, function(err, message) { 
-      if (err) console.log(err); 
+      if (err) console.log(err);
+      else console.log('Email sent');
     });
-  } else {
-    console.log(message);
   }
+
 }
 
 

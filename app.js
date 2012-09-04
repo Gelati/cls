@@ -1,5 +1,6 @@
 var exp = require('express');
 var fs = require('fs');
+var hbs = require('hbs');
 var Handlebars = require('handlebars');
 
 if (process.env.REDISTOGO_URL) {
@@ -13,7 +14,8 @@ if (process.env.REDISTOGO_URL) {
     client = redis.createClient();
 }
 
-var tpl = fs.readFileSync('./place.stache', 'utf8');
+
+var tpl = fs.readFileSync(__dirname + 'place.stache', 'utf8');
 var template = Handlebars.compile(tpl);
 
 var places = {};
@@ -52,14 +54,21 @@ function sortit(data) {
     out.push(data[i]);
   }
   out.sort(function(a, b) {
-    if (a.added && !b.added) return true;
-    if (b.added && !a.added) return false;
-    return (b.added > a.added);
+    if (a.added && !b.added) return 0;
+    if (b.added && !a.added) return 1;
+    return (b.added < a.added);
   });
   return out;
 }
 
+
+
 var app = exp();
+app.set('view engine', 'stache');
+app.engine('stache', require('hbs').__express);
+app.set('views', __dirname + '/views');
+app.set('views', __dirname + '/views');
+pp.use(express.static(__dirname + '/public'));
 
 app.get('/', function(req, res){
   getPlaces(function (data) {
@@ -69,8 +78,14 @@ app.get('/', function(req, res){
     });
     page = '<h1>' + out.length + ' places found</h1>';
     page += out.join('');
-    res.send(page);
+    res.render('index', {
+      body : page
+    });
   });
+});
+
+app.post('/remove', function(req, res) {
+  console.log(arguments);
 });
 
 app.listen(process.env.PORT);
