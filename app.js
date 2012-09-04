@@ -15,7 +15,7 @@ if (process.env.REDISTOGO_URL) {
 }
 
 
-var tpl = fs.readFileSync(__dirname + 'place.stache', 'utf8');
+var tpl = fs.readFileSync(__dirname + '/views/place.stache', 'utf8');
 var template = Handlebars.compile(tpl);
 
 var places = {};
@@ -53,12 +53,11 @@ function sortit(data) {
   for(var i in data) if (data.hasOwnProperty(i)) {
     out.push(data[i]);
   }
-  out.sort(function(a, b) {
-    if (a.added && !b.added) return 0;
-    if (b.added && !a.added) return 1;
+  return out.sort(function(a, b) {
+    if (!a.added) return 0;
+    if (!b.added) return 1;
     return (b.added < a.added);
   });
-  return out;
 }
 
 
@@ -67,8 +66,7 @@ var app = exp();
 app.set('view engine', 'stache');
 app.engine('stache', require('hbs').__express);
 app.set('views', __dirname + '/views');
-app.set('views', __dirname + '/views');
-pp.use(express.static(__dirname + '/public'));
+app.use(exp.static(__dirname + '/public'));
 
 app.get('/', function(req, res){
   getPlaces(function (data) {
@@ -78,9 +76,7 @@ app.get('/', function(req, res){
     });
     page = '<h1>' + out.length + ' places found</h1>';
     page += out.join('');
-    res.render('index', {
-      body : page
-    });
+    res.send(page);
   });
 });
 

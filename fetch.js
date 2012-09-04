@@ -150,7 +150,7 @@ function scrapePage(p) {
       var place = {
         title : title,
         href : p,
-        added : new Date(),
+        added : (new Date()).toTime(),
         photos : [],
         text: stripText(doc.getElementById('userbody').textContent),
       };

@@ -1,5 +1,5 @@
 <div class="listing">
-	<h2><a href="{{href}}">{{title}}</a></h2>
+	<h2><a href="{{href}}">{{title}}</a> added {{added}}</h2>
 	<p>{{summary}}... <a href="{{href}}">more</a></p>
 	<div class="photos">
 	{{#if photos}}
