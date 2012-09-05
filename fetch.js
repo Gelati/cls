@@ -15,6 +15,8 @@ if (process.env.REDISTOGO_URL) {
     client = redis.createClient();
 }
 
+var FORCE = process.env.FORCE || false;
+
 var tpl = fs.readFileSync(__dirname + '/views/place.stache', 'utf8');
 var lay = fs.readFileSync(__dirname + '/views/email_layout.stache', 'utf8');
 
@@ -23,14 +25,11 @@ var layout = Handlebars.compile(lay);
 
 var query = 'http://sfbay.craigslist.org/search/apa/sfc?&maxAsk=3250&minAsk=2000&nh=10&nh=11&nh=12&nh=149&nh=18&nh=21&nh=4&srchType=T';
 
-var imagestoignore = 'facebook|twitter|tweet|linkedin|yelp|feed|rss|created_at|apply_now|header|top|contact_us|footer|logo|common|acctPhoto|space\.|jwavro';
+var imagestoignore = 'facebook|twitter|tweet|linkedin|yelp|feed|rss|created_at|apply_now|header|top|contact_us|footer|logo|common|acctPhoto|space\.|jwavro|create_gif';
 
 //email shiz
 var sendgrid;
 if (process.env.SENDGRID_USERNAME) {
-  console.log('sendgrid details');
-  console.log(process.env.SENDGRID_USERNAME);
-  console.log(process.env.SENDGRID_PASSWORD)
   sendgrid = new Sendgrid(process.env.SENDGRID_USERNAME, process.env.SENDGRID_PASSWORD);
 }
 
@@ -97,7 +96,7 @@ function scrape(index, cb) {
 
 function isUnique(href) {
   var uid = getPlaceId(href);
-  return !places[uid];
+  return (FORCE) ? true : !places[uid];
 }
 
 
@@ -123,10 +122,11 @@ function sendmail() {
   var body = { body : msgs.join('').replace(/--+/g, ' ') };
   
   var message = {
-    from:    "craigslist update <mattsain@gmail.com>", 
-    to:      "munchkin <sunita.bose@gmail.com>, me <mattsain@gmail.com>",
+    from:    "mattsain@gmail.com", 
+    to:      ["sunita.bose@gmail.com", "mattsain@gmail.com"],
     subject: "Craigslist apartments for rent",
-    html : sws(layout(body))
+    html : sws(layout(body)),
+    text : 'text'
   };
 
   console.log(message);
