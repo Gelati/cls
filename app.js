@@ -63,11 +63,12 @@ function sortit(data) {
 
 
 var app = exp();
+/*
 app.set('view engine', 'stache');
 app.engine('stache', require('hbs').__express);
 app.set('views', __dirname + '/views');
 app.use(exp.static(__dirname + '/public'));
-
+*/
 app.get('/', function(req, res){
   getPlaces(function (data) {
     var out = [], page = '', places = sortit(data);
