@@ -29,7 +29,7 @@ var imagestoignore = 'facebook|twitter|tweet|linkedin|yelp|feed|rss|created_at|a
 
 //email shiz
 var sendgrid;
-if (process.env.SENDGRID_USERNAME) {
+if (process.env.SENDEMAIL && process.env.SENDGRID_USERNAME) {
   sendgrid = new Sendgrid(process.env.SENDGRID_USERNAME, process.env.SENDGRID_PASSWORD);
 }
 
@@ -50,6 +50,7 @@ function addPlace(obj) {
   var uid = getPlaceId(obj.href);
   client.HMSET(uid, obj);
   client.SADD('places', uid);
+  client.SADD('new', uid);
   places[uid] = obj;
 }
 
