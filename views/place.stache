@@ -1,5 +1,5 @@
 <div class="listing">
-	<h2><a href="{{href}}">{{title}}</a> <small>{{if added}} added {{added}} |{{/if}} <a href="/remove/{{id}}">remove</a> | <a href="/save/{{id}}">save</a></small></h2>
+	<h2><a href="{{href}}">{{title}}</a> <small>{{#if added}} added {{added}} |{{/if}} <a href="/remove/{{id}}">remove</a> | <a href="/save/{{id}}">save</a></small></h2>
 	<p>{{summary}}... <a href="{{href}}">more</a></p>
 	<div class="photos">
 	{{#if photos}}
