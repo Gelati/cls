@@ -1,6 +1,19 @@
 var client = require('./redis_client');
 
-function getPlaces(type, cb) {
+// returns an array
+function sortit(data) {
+  var out = [];
+  for(var i in data) {
+    data.hasOwnProperty(i) && out.push(data[i]);
+  }
+  return out.sort(function(a, b) {
+    if (!a.added) { return 0; }
+    if (!b.added) { return 1; }
+    return (b.added < a.added);
+  });
+}
+
+module.exports = function (type, cb) {
   var loaded = -1;
   var tot = 0;
   var places = {};
@@ -28,17 +41,4 @@ function getPlaces(type, cb) {
       });
     });
   });
-}
-
-// returns an array
-function sortit(data) {
-  var out = [];
-  for(var i in data) {
-    data.hasOwnProperty(i) && out.push(data[i]);
-  }
-  return out.sort(function(a, b) {
-    if (!a.added) { return 0; }
-    if (!b.added) { return 1; }
-    return (b.added < a.added);
-  });
-}
+};

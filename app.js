@@ -1,12 +1,16 @@
 var exp = require('express');
 var client = require('./redis_client');
+var fs = require('fs');
 var getPlaces = require('./get_places');
+var hbs = require('hbs');
 
 var app = exp();
 app.set('view engine', 'stache');
-app.engine('stache', require('hbs').__express);
+app.engine('stache', hbs.__express);
 app.set('views', __dirname + '/views');
 app.use(exp.static(__dirname + '/public'));
+
+hbs.registerPartial('place', fs.readFileSync(app.get('views') + '/place.stache', 'utf8'));
 
 app.get('/', function(req, res){
   getPlaces('new', function (places) {
