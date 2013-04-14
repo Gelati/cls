@@ -25,7 +25,7 @@ var layout = Handlebars.compile(lay);
 
 var query = 'http://sfbay.craigslist.org/search/apa/sfc?&maxAsk=3250&minAsk=2000&nh=10&nh=11&nh=12&nh=149&nh=18&nh=21&nh=4&srchType=T';
 
-var imagestoignore = 'facebook|twitter|tweet|linkedin|yelp|feed|rss|created_at|apply_now|header|top|contact_us|footer|logo|common|acctPhoto|space\.|jwavro|create_gif';
+var imagestoignore = '\.git|\.ga\.php|facebook|twitter|tweet|linkedin|yelp|feed|rss|created_at|apply_now|header|top|contact_us|footer|logo|common|acctPhoto|space\.|jwavro|create_gif';
 
 //email shiz
 var sendgrid;

@@ -1,0 +1,4 @@
+<h1>{{length}} places found</h1>
+{{#places}}
+  {{{>place}}}
+{{/places}}

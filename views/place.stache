@@ -1,14 +1,14 @@
 <div class="listing">
-	<h2><a href="{{href}}">{{title}}</a> <small>{{#if added}} added {{added}} |{{/if}} <a href="/remove/{{id}}">remove</a> | <a href="/save/{{id}}">save</a></small></h2>
-	<p>{{summary}}... <a href="{{href}}">more</a></p>
-	<div class="photos">
-	{{#if photos}}
-		{{#photos}}
-		<img src={{.}} height=300 class="photo">
-		{{/photos}}
-	{{/if}}
-	{{#if map}}
-          <img class="map" src="http://maps.googleapis.com/maps/api/staticmap?size=400x300&markers={{map}}&sensor=false&key=AIzaSyDaK3hDKD7PNHtj2eAdaI5faiFx8o0op60&zoom=14" width=400 height=300>
-        {{/if}}
-	</div>
+  <h2><a href="{{href}}">{{title}}</a> <small>{{#if added}} added {{added}} |{{/if}} <a href="/remove/{{id}}">remove</a> | <a href="/save/{{id}}">save</a></small></h2>
+  <p>{{summary}}... <a href="{{href}}">more</a></p>
+  <div class="photos">
+  {{#if photos}}
+    {{#photos}}
+    <img src={{.}} height=300 class="photo">
+    {{/photos}}
+  {{/if}}
+  {{#if map}}
+    <img class="map" src="http://maps.googleapis.com/maps/api/staticmap?size=400x300&markers={{map}}&sensor=false&key=AIzaSyDaK3hDKD7PNHtj2eAdaI5faiFx8o0op60&zoom=14" width=400 height=300>
+  {{/if}}
+  </div>
 </div>

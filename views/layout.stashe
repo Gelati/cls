@@ -1,0 +1,12 @@
+<!doctype html>
+<head>
+  <title>{{title}}</title>
+  <link rel='stylesheet' href='/style.css'>
+</head>
+
+<body>
+  {{{body}}}
+
+</body>
+
+</html>
