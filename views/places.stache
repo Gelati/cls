@@ -1,0 +1,6 @@
+<h1>{{length}} places found</h1>
+<div class="listings">
+  {{#places}}
+    {{> place}}
+  {{/places}}
+</div>
