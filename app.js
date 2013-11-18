@@ -55,5 +55,10 @@ app.get('/save/:id', function(req, res) {
   });
 });
 
+app.get('/__remove__all', function(req, res) {
+  client.FLUSHALL();
+  res.redirect('/');
+});
+
 app.listen(PORT);
 console.log('Listening on port ' + PORT);
