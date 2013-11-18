@@ -4,9 +4,9 @@
     <title>{{title}}</title>
     <link rel='stylesheet' href='/style.css'>
   </head>
-
   <body>
-    {{{body}}}
+    <div id="main">
+      {{{body}}}
+    </div>
   </body>
-
 </html>

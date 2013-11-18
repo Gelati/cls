@@ -10,6 +10,8 @@ app.engine('stache', hbs.__express);
 app.set('views', __dirname + '/views');
 app.use(exp.static(__dirname + '/public'));
 
+var PORT = process.env.PORT || 3000;
+
 hbs.registerPartial('place', fs.readFileSync(app.get('views') + '/place.stache', 'utf8'));
 
 app.get('/', function(req, res){
@@ -32,21 +34,21 @@ app.get('/saved', function(req, res){
 
 app.get('/remove/:id', function(req, res) {
   client.SREM('new', req.param('id'), function (err, resp) {
-    res.json({ id : req.param('id'), error : err, resp : resp });
+    res.redirect('/');
   });
 });
 
 app.get('/unsave/:id', function(req, res) {
   client.SREM('saved', req.param('id'), function (err, resp) {
-    res.json({ id : req.param('id'), error : err, resp : resp });
+    res.redirect('/saved');
   });
 });
 
 app.get('/save/:id', function(req, res) {
   client.SADD('saved', req.param('id'), function (err, resp) {
-    res.json({ id : req.param('id'), error : err, resp : resp });
+    res.redirect('/saved');
   });
 });
 
-app.listen(process.env.PORT);
-console.log('Listening on port ' + process.env.PORT);
+app.listen(PORT);
+console.log('Listening on port ' + PORT);

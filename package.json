@@ -6,12 +6,12 @@
     "npm":  "1.1.x"
   },
   "dependencies" : {
-    "domino" : "*",
-    "express" : "*",
-    "handlebars" : "*",
-    "hbs" : "*",
-    "redis" : "*",
-    "request" : "*",
-    "sendgrid" : "*"
+    "domino" : "1.0.2",
+    "express" : "3.0.0rc4",
+    "handlebars" : "1.0.6-2",
+    "hbs" : "1.0.5",
+    "redis" : "0.7.2",
+    "request" : "2.11.0",
+    "sendgrid" : "0.2.4"
   }
 }

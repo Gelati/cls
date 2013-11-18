@@ -16,7 +16,8 @@ var template = Handlebars.compile(tpl);
 var layout = Handlebars.compile(lay);
 
 var sendTo = ['mattsain@gmail.com', 'sunita.bose@gmail.com'];
-var query = 'http://sfbay.craigslist.org/search/apa/sfc?&maxAsk=3250&minAsk=2000&nh=10&nh=11&nh=12&nh=149&nh=18&nh=21&nh=4&srchType=T';
+var BASEURL = 'http://sfbay.craigslist.org/';
+var query = BASEURL + 'search/apa/sfc?&maxAsk=3250&minAsk=2000&nh=10&nh=11&nh=12&nh=149&nh=18&nh=21&nh=4&srchType=T';
 
 
 var imagestoignore = '\.gif|\.png|\.ga\.php|facebook|twitter|tweet|linkedin|yelp|feed|rss|created_at|apply_now|header|top|contact_us|footer|logo|common|acctPhoto|space\.|jwavro|create_gif';
@@ -170,7 +171,7 @@ getPlaces('new', function () {
     total = rows.length;
     placeLoaded();
     rows.forEach(function(item, i) {
-      var href = item.href;
+      var href = BASEURL + item.href;
       if (isUnique(href)) {
         scrapePlacePage(href);
       } else {
