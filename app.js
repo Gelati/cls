@@ -1,10 +1,12 @@
 var exp = require('express');
-var client = require('./redis_client');
 var fs = require('fs');
-var getPlaces = require('./get_places');
 var hbs = require('hbs');
 
+var client = require('./redis_client');
+var getPlaces = require('./get_places');
+
 var app = exp();
+
 app.set('view engine', 'stache');
 app.engine('stache', hbs.__express);
 app.set('views', __dirname + '/views');
@@ -32,21 +34,24 @@ app.get('/saved', function(req, res){
   });
 });
 
+
+// setters for save unsave and remove functionality
+
 app.get('/remove/:id', function(req, res) {
   client.SREM('new', req.param('id'), function (err, resp) {
-    res.redirect('/');
+    res.redirect('back');
   });
 });
 
 app.get('/unsave/:id', function(req, res) {
   client.SREM('saved', req.param('id'), function (err, resp) {
-    res.redirect('/saved');
+    res.redirect('back');
   });
 });
 
 app.get('/save/:id', function(req, res) {
   client.SADD('saved', req.param('id'), function (err, resp) {
-    res.redirect('/saved');
+    res.redirect('back');
   });
 });
 

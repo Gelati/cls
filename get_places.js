@@ -7,9 +7,10 @@ function sortit(data) {
     data.hasOwnProperty(i) && out.push(data[i]);
   }
   return out.sort(function(a, b) {
-    if (!a.added) { return 0; }
-    if (!b.added) { return 1; }
-    return (b.added < a.added);
+    if (!a.rawDate && !b.rawDate) { return 0; }
+    if (!b.rawDate) { return -1; }
+    if (!a.rawDate) { return 1; }
+    return b.rawDate.getTime() - a.rawDate.getTime();
   });
 }
 
@@ -33,7 +34,8 @@ module.exports = function (type, cb) {
     replies.forEach(function(uid) {
       places[uid] && addLoaded();
       client.hgetall(uid, function (err, obj) {
-        obj.added && (obj.added = (new Date(obj.added * 1)).toDateString());
+        obj.rawDate = obj.added ? new Date(obj.added * 1) : null;
+        obj.rawDate && (obj.added = obj.rawDate.toLocaleString());
         obj.photos = (obj.photos) ? obj.photos.split(',') : [];
         obj.id = uid;
         places[uid] = obj;

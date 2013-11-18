@@ -6,6 +6,7 @@
   </head>
   <body>
     <div id="main">
+      <div class="nav"><a href="/">Home</a> | <a href="/saved">Saved</a></div>
       {{{body}}}
     </div>
   </body>

@@ -1,24 +1,25 @@
-var client = require('./redis_client');
 var domino = require('domino');
 var fs = require('fs');
-var getPlaces = require('./get_places');
 var Handlebars = require('handlebars');
 var request = require('request');
 var Sendgrid = require('sendgrid').SendGrid;
 
-var FORCE = !!process.env.FORCE_SEND;
-var PREVENT = true; //!!process.env.PREVENT_SEND;
+var client = require('./redis_client');
+var config = require('./config');
+var getPlaces = require('./get_places');
 
+var FORCE = !!process.env.FORCE_SEND;
+var PREVENT = !!process.env.PREVENT_SEND;
+
+var style = fs.readFileSync(__dirname + '/public/style.css', 'utf8');
 var tpl = fs.readFileSync(__dirname + '/views/place.stache', 'utf8');
 var lay = fs.readFileSync(__dirname + '/views/email_layout.stache', 'utf8');
 
 var template = Handlebars.compile(tpl);
 var layout = Handlebars.compile(lay);
 
-var sendTo = ['mattsain@gmail.com', 'sunita.bose@gmail.com'];
-var BASEURL = 'http://sfbay.craigslist.org/';
-var query = BASEURL + 'search/apa/sfc?&maxAsk=3250&minAsk=2000&nh=10&nh=11&nh=12&nh=149&nh=18&nh=21&nh=4&srchType=T';
-
+var sendTo = config.emails;
+var query = config.baseurl + config.query;
 
 var imagestoignore = '\.gif|\.png|\.ga\.php|facebook|twitter|tweet|linkedin|yelp|feed|rss|created_at|apply_now|header|top|contact_us|footer|logo|common|acctPhoto|space\.|jwavro|create_gif';
 
@@ -91,7 +92,7 @@ function sws(txt) {
 }
 
 function sendmail() {
-  var body = { body : msgs.join('').replace(/--+/g, ' ') };
+  var body = { body : msgs.join('').replace(/--+/g, ' '), style: style };
 
   var message = {
     from:    sendTo[0],
@@ -142,9 +143,13 @@ function scrapePlacePage(p) {
         });
       }
 
-      var maps = doc.querySelector('#leaflet');
+      var maps = doc.getElementById('map');
       if (maps) {
         place.map = maps.getAttribute('data-latitude') + ',' + maps.getAttribute('data-longitude');
+      }
+      var address = doc.querySelector('.userbody .mapaddress');
+      if (address) {
+        place.address = address.textContent;
       }
 
       // add place to db
@@ -171,7 +176,7 @@ getPlaces('new', function () {
     total = rows.length;
     placeLoaded();
     rows.forEach(function(item, i) {
-      var href = BASEURL + item.href;
+      var href = config.baseurl + item.href;
       if (isUnique(href)) {
         scrapePlacePage(href);
       } else {
