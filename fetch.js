@@ -63,7 +63,7 @@ function scrape(index, cb) {
       cb(body, win, doc);
     } else {
       placeLoaded();
-      console.log('scrape error', index, error);
+      console.log('scrape error', index, error, response.statusCode);
     }
   });
 }
