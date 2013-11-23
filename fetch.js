@@ -4,9 +4,9 @@ var Handlebars = require('handlebars');
 var request = require('request');
 var Sendgrid = require('sendgrid').SendGrid;
 
-var client = require('./redis_client');
-var config = require('./config');
-var getPlaces = require('./get_places');
+var client = require('./helpers/redis_client');
+var config = require('./helpers/config');
+var getPlaces = require('./helpers/get_places');
 
 var FORCE = !!process.env.FORCE_SEND;
 var PREVENT = !!process.env.PREVENT_SEND;
@@ -33,8 +33,6 @@ if (!PREVENT && process.env.SENDEMAIL && process.env.SENDGRID_USERNAME) {
 }
 
 var places = {};
-var msgs = [];
-
 
 //DB
 client.on('error', function (err) {
@@ -83,7 +81,6 @@ function placeLoaded() {
   if (loadedCount >= total) {
     console.log('finished scraping. found ' + msgs.length + ' new places');
     msgs.length && sendmail();
-    client.end();
   }
 }
 
@@ -167,22 +164,41 @@ function scrapePlacePage(p) {
 
 
 //init
-var loadedCount = -1;
-var total = 0;
+var loadedCount;
+var total;
+var msgs;
 
-getPlaces('new', function () {
-  scrape(query, function($, win, doc) {
-    var rows = doc.querySelectorAll('p.row .pl a');
-    total = rows.length;
-    placeLoaded();
-    rows.forEach(function(item, i) {
-      var href = config.baseurl + item.href;
-      if (isUnique(href)) {
-        scrapePlacePage(href);
-      } else {
-        placeLoaded();
+module.exports = function(callback) {
+  loadedCount = -1;
+  msgs = [];
+
+  console.log('Fetching...');
+  getPlaces('new', function () {
+    scrape(query, function($, win, doc) {
+      var rows = doc.querySelectorAll('p.row .pl a');
+      total = rows.length;
+      placeLoaded();
+
+      for (var ii = 0, uniqueItems = 0;
+           ii < total && uniqueItems < config.maxperscrape;
+           ii++) {
+        var href = config.baseurl + rows[ii].href;
+        if (isUnique(href)) {
+          setTimeout(
+            scrapePlacePage.bind(null, href),
+            config.scrapeintervalsecs * uniqueItems * 1000
+          );
+          uniqueItems++;
+        } else {
+          placeLoaded();
+        }
       }
+
+      total = uniqueItems;
+      var totalTime = (total - 1) * config.scrapeintervalsecs;
+
+      console.log('Fetching '+total+' new listings in ~'+totalTime+' secconds');
+      setTimeout(callback, totalTime * 1000);
     });
   });
-});
-
+}

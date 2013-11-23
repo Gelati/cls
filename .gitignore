@@ -2,3 +2,4 @@
 dump.rdb
 node_modules
 *.swp
+.DS_Store
