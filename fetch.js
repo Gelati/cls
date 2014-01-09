@@ -1,15 +1,12 @@
-var domino = require('domino');
-var fs = require('fs');
-var Handlebars = require('handlebars');
-var request = require('request');
-var Sendgrid = require('sendgrid').SendGrid;
-
 var client = require('./helpers/redis_client');
 var config = require('./helpers/config');
 var getPlaces = require('./helpers/get_places');
 
-var FORCE = !!process.env.FORCE_SEND;
-var PREVENT = !!process.env.PREVENT_SEND;
+var domino = require('domino');
+var fs = require('fs');
+var Handlebars = require('handlebars');
+var request = require('request');
+var sendgrid = require('sendgrid')(config.sendgrid.user, config.sendgrid.pass);
 
 var style = fs.readFileSync(__dirname + '/public/style.css', 'utf8');
 var tpl = fs.readFileSync(__dirname + '/views/place.stache', 'utf8');
@@ -18,26 +15,14 @@ var lay = fs.readFileSync(__dirname + '/views/email_layout.stache', 'utf8');
 var template = Handlebars.compile(tpl);
 var layout = Handlebars.compile(lay);
 
-var sendTo = config.emails;
 var query = config.baseurl + config.query;
 
 var imagestoignore = '\.git|\.ga\.php|facebook|twitter|tweet|linkedin|yelp|feed|rss|created_at|apply_now|header|top|contact_us|footer|logo|common|acctPhoto|space\.|jwavro|create_gif';
 
-//email shiz
-var sendgrid;
-if (!PREVENT && process.env.SENDEMAIL && process.env.SENDGRID_USERNAME) {
-  sendgrid = new Sendgrid(
-    process.env.SENDGRID_USERNAME,
-    process.env.SENDGRID_PASSWORD
-  );
-}
-
 var places = {};
 
 //DB
-client.on('error', function (err) {
-  console.log('Error ' + err);
-});
+client.on('error', console.log);
 
 function getPlaceId(href) {
   return href.substring(href.lastIndexOf('/') + 1, href.indexOf('.html'));
@@ -68,7 +53,7 @@ function scrape(index, cb) {
 
 function isUnique(href) {
   var uid = getPlaceId(href);
-  return (FORCE) ? true : !places[uid];
+  return !places[uid];
 }
 
 function stripText(txt) {
@@ -89,23 +74,22 @@ function sws(txt) {
 }
 
 function sendmail() {
+  var sendTo = config.emails;
+
+  if (!sendTo[0]) {
+    return console.log('emails required, edit config.js');
+  }
+
   var body = { body : msgs.join('').replace(/--+/g, ' '), style: style };
 
   var message = {
     from:    sendTo[0],
     to:      sendTo,
     subject: 'Craigslist apartments for rent',
-    html : sws(layout(body)),
-    text : 'text'
+    html :    sws(layout(body)),
   };
 
-  sendgrid && sendgrid.send(message, function(err, message) {
-    if (err) {
-      console.log('sendgrid error', err);
-    } else {
-      console.log('Email sent');
-    }
-  });
+  sendgrid.send(message, console.log);
 }
 
 
@@ -201,4 +185,4 @@ module.exports = function(callback) {
       setTimeout(callback, totalTime * 1000);
     });
   });
-}
+};

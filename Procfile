@@ -1,3 +1,3 @@
 worker: redis-server
-web: nodemon app.js
+web: node app.js
 worker: node cron.js
